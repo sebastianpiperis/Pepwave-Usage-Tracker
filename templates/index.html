@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PEPWAVE Cellular Usage Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://neubrutalismcss.goodvessel92551.repl.co//style.css" rel="stylesheet" type="text/css" />
+
+</head>
+<!-- Add this check around the logout button in your index.html -->
+{% if 'username' in session %}
+    <div class="logout-container">
+        <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </div>
+{% endif %}
+<div class="container">
+    <center><header>
+        <h1>PEPWAVE CELLULAR USAGE TOOL</h1>
+    </header></center>
+
+
+<body class="body-container">
+
+            </div>
+            <div class="date-picker">
+                <form id="search-form" method="post">
+                    <div class="date-input">
+                        <label for="start_date">START DATE</label>
+                        <input type="date" id="start_date" name="start_date">
+                    </div>
+                    <div class="date-input">
+                        <label for="end_date">END DATE</label>
+                        <input type="date" id="end_date" name="end_date">
+                    </div>
+                    <button id="searchButton" type="submit">Search</button>
+                </form>
+            </div>
+            <div id="loading-spinner" class="hourglass" style="display: none;"></div>
+            <div id = "device-list-container" class="device-list"
+            {% if not devices and not (token_error or api_error) %}
+            style="visibility:hidden;"
+            {% else %}
+            style="visibility:visible;"
+            {% endif %}
+            >
+            {% if token_error %}
+                <p>Oops, something went wrong with token authentication. Please contact IT for assistance.</p>
+            {% elif api_error %}
+                <p>{{ api_error }}</p>  <!-- Display API error message -->
+            {% else %}
+                {% if search_submitted %}
+                    <p class="underline">DATA FOR {{ start_date }} to {{ end_date }}</p>
+                    {% if devices %}
+                        <ul id="device-list">
+                        {% for device_name, total_gb, location_name, job_number in devices %}
+                            <li>
+                            {% if 'Wareho' in job_number %}
+                                <!-- If the job number contains 'Miami Wareho', display the text without a link -->
+                                {{ device_name }} = {{ total_gb }} GB ({{ location_name }})
+                              {% else %}
+                                <!-- Otherwise, make it a clickable link -->
+                                <a href="https://choose2rent.ielightning.net/jobs/job.aspx?orderid={{ job_number }}" target="_blank">
+                                  {{ device_name }} = {{ total_gb }} GB ({{ location_name }})
+                                </a>
+                              {% endif %}
+                            </li> 
+                        {% endfor %}     
+                        </ul>
+                    {% else %}
+                        <p>There are no PEPWAVE devices over 3GB of Cellular Usage for the dates selected.</p>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            </div>
+            <script>
+                sessionStorage.setItem('searchPerformed', '{{ search_submitted }}');
+            </script>
+    
+    <button id="resetBtn" onclick=resetList() display="hidden">Reset</button>
+</div>
+
+
+</form>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cellular Usage Report Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='loginstyles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/info.css' rel='stylesheet'>
+
+</head>
+<body>
+    <div class="main-container">
+        <!-- Info Section with Hover Effect -->
+        <div class="info-section">
+            <div class="info-icon">
+                
+                <p class="hover-text">Hover here for a description  <img src="{{ url_for('static', filename='cursor.png') }}" alt="Cursor Icon" class="cursor-icon">
+                </p>
+            </div>
+            <div class="info-content">
+                <h2>Pepwave Cellular Usage Tool</h2>
+                <p>This tool is used to track the cellular usage for C2R's Pepwave devices.</p>
+                <h3>STEP 1</h3>
+                <p>Select the dates you want to see the total cellular usage for.</p>
+                <h3>STEP 2</h3>
+                <p>Click search</p>
+                <h3>THINGS TO NOTE:</h3>
+                <ul></ul>
+                <li>You will only see the cellular usage for devices that are over 3GB and above.</li>
+                <li>You cannot see data past 60 days from the current date.</li>
+                <li>You can correlate the dates to a Job's Event Rental Start and End date if you want to ensure there aren't any Pepwaves going over their usage.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Login Form Section -->
+        <div class="login-section">
+            <form method="POST" action="/form_login">
+                <img src="{{ url_for('static', filename='c2rlogo.png') }}" alt="Choose 2 Rent Logo" class="login-image">
+                <input type="text" name="username" placeholder="Username" required id="text">
+                <input type="password" name="password" placeholder="Password" required id="text">
+                <button type="submit" id="submit">Login</button>
+                {% if info %}
+                    <p>{{ info }}</p>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</body>
+</html>
