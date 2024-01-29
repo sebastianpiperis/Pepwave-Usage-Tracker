@@ -27,16 +27,6 @@ all_device_ids = ','.join(device_name_to_id.keys()) # joins all device ids into 
 # - since that api call retrieves data for singular devices
 
 
-# global variables for index route 
-global token_error, search_submitted, device_data, api_error, start_date, end_date
-token_error = False
-search_submitted = False
-device_data = None
-api_error = None
-start_date = None
-end_date = None
-
-
 
 @app.route('/form_login', methods=['POST', 'GET']) # route can handle both types of request. might just leave it as ['POST']
 def login():
@@ -57,7 +47,12 @@ def login():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    global token_error, search_submitted, device_data, api_error, start_date, end_date
+    token_error = False
+    search_submitted = False
+    device_data = None
+    api_error = None
+    start_date = None
+    end_date = None
 
     if 'username' not in session:  # Check if the user is authenticated
         return redirect(url_for('login'))
@@ -158,55 +153,23 @@ def fetch_device_data(start_date_str, end_date_str, token):
     #print(devices_data)
     return prepare_display_data(devices_data)
     
-
-# fetch locationName from API Call
-def fetch_location_name(device_name):
-    api_url = f'https://webapi1.ielightning.net/api/v1/Inventory/StockItemsPage/StockItem/GetStockItemByBarCode?barCode={device_name}'
-    headers = {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJbnRlcm5hbENvbnRhY3RJZCI6IjMzNjQiLCJDb21wYW55SWQiOiI3NzQiLCJJZGVudCI6ImNob29zZTJyZW50IiwiQnVpbGRVbmlxdWVJZCI6IjQ1MDEiLCJSZWZyZXNoVG9rZW4iOiJtdFpWalE3MGoxMHJxbmRNdzFRS1lnPT0iLCJPZmZpY2VBY2Nlc3NJZHMiOiI0NTMsNDU0IiwibmJmIjoxNzA2MDk5NzMwLCJleHAiOjE3MDYxODYxMzAsImlhdCI6MTcwNjA5OTczMCwiaXNzIjoiaWVsaWdodG5pbmcubmV0In0.D2lvVdnXy4hI20kjc4hy4UKcNI1li7B7429_80rKN4A',
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-    }
-    try:
-        response = requests.get(api_url, headers=headers)
-        response.raise_for_status()  # This will raise an HTTPError if the HTTP request returned an unsuccessful status code
-        
-        # Assuming the API returns a JSON response where the location name is under the key 'locationName'
-        data = response.json()
-        location_name = data.get('locationName', 'Unknown')
-        job_number = location_name
-        return location_name[0:12], job_number[6:12]  # sliced the string into only getting the job number
-
-    except requests.HTTPError as http_err:
-        print(f"HTTP error occurred: {http_err}")  # Python 3.6
-        return 'Unknown'  # Returning 'Unknown' or you could return None or any other error indication
-    except Exception as err:
-        print(f"An error occurred: {err}")
-        return 'Unknown'
     
-
 
 def prepare_display_data(devices_data):
     # processes devices_data dictionary to prepare it for display
     display_data = []
-    #print(devices_data) 
+    print(devices_data) 
     
     # filtering conditions in this for loop for displaying data 
     for device_id, data in devices_data.items():
         total_gb = round(data['total_up'] + data['total_down'], 2)
         if total_gb >= 3.0: 
-
-            location_name, job_number = fetch_location_name( data['name']) # makes argument to call location name function
-            print(job_number)
-            display_data.append((data['name'], total_gb, location_name, job_number))
+            display_data.append((data['name'], total_gb))
 
     display_data.sort(key=lambda x: x[1], reverse=True) # sorts list in descending order 
 
     print(display_data)
     return display_data #returns sorted list 
-
-
-
 
 
 
