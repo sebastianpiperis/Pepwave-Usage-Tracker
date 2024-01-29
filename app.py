@@ -163,7 +163,7 @@ def fetch_device_data(start_date_str, end_date_str, token):
 def fetch_location_name(device_name):
     api_url = f'https://webapi1.ielightning.net/api/v1/Inventory/StockItemsPage/StockItem/GetStockItemByBarCode?barCode={device_name}'
     headers = {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJbnRlcm5hbENvbnRhY3RJZCI6IjMzNjQiLCJDb21wYW55SWQiOiI3NzQiLCJJZGVudCI6ImNob29zZTJyZW50IiwiQnVpbGRVbmlxdWVJZCI6IjQ1MDEiLCJSZWZyZXNoVG9rZW4iOiJtdFpWalE3MGoxMHJxbmRNdzFRS1lnPT0iLCJPZmZpY2VBY2Nlc3NJZHMiOiI0NTMsNDU0IiwibmJmIjoxNzA2MDk5NzMwLCJleHAiOjE3MDYxODYxMzAsImlhdCI6MTcwNjA5OTczMCwiaXNzIjoiaWVsaWdodG5pbmcubmV0In0.D2lvVdnXy4hI20kjc4hy4UKcNI1li7B7429_80rKN4A',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJbnRlcm5hbENvbnRhY3RJZCI6IjMzNjQiLCJDb21wYW55SWQiOiI3NzQiLCJJZGVudCI6ImNob29zZTJyZW50IiwiQnVpbGRVbmlxdWVJZCI6IjQ1MDEiLCJSZWZyZXNoVG9rZW4iOiJqaDhzZTdkNFd4SkhCcWE1NjZTNXdnPT0iLCJPZmZpY2VBY2Nlc3NJZHMiOiI0NTMsNDU0IiwibmJmIjoxNzA2NTMwNjM1LCJleHAiOjE3MDY2MTcwMzUsImlhdCI6MTcwNjUzMDYzNSwiaXNzIjoiaWVsaWdodG5pbmcubmV0In0.3Og1spZ4VCgnOws1gxwDByJ-iU-powhocNhVVm7TaJs',
         'Content-Type': 'application/json',
         'Accept': 'application/json',
     }
