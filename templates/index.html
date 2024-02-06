@@ -48,23 +48,29 @@
             {% if token_error %}
                 <p>Oops, something went wrong with token authentication. Please contact IT for assistance.</p>
             {% elif api_error %}
-                <p>{{ api_error }}</p>  <!-- Display API error message -->
+                <p>{{ api_error }}</p>
             {% else %}
                 {% if search_submitted %}
                     <p class="underline">DATA FOR {{ start_date }} to {{ end_date }}</p>
                     {% if devices %}
                         <ul id="device-list">
-                        {% for device_name, total_gb, location_name, job_number in devices %}
+                        {% for device in devices %}
                             <li>
-                            {% if 'Wareho' in job_number %}
-                                <!-- If the job number contains 'Miami Wareho', display the text without a link -->
-                                {{ device_name }} = {{ total_gb }} GB ({{ location_name }})
-                              {% else %}
-                                <!-- Otherwise, make it a clickable link -->
-                                <a href="https://choose2rent.ielightning.net/jobs/job.aspx?orderid={{ job_number }}" target="_blank">
-                                  {{ device_name }} = {{ total_gb }} GB ({{ location_name }})
-                                </a>
-                              {% endif %}
+                            {% if device|length == 4 %}
+                                <!-- Admin user case -->
+                                {% set device_name, total_gb, location_name, job_number = device %}
+                                {% if 'Wareho' in job_number %}
+                                    {{ device_name }} = {{ total_gb }} GB ({{ location_name }})
+                                {% else %}
+                                    <a href="https://choose2rent.ielightning.net/jobs/job.aspx?orderid={{ job_number }}" target="_blank">
+                                    {{ device_name }} = {{ total_gb }} GB ({{ location_name }})
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                <!-- Non-admin user case -->
+                                {% set device_name, total_gb = device %}
+                                {{ device_name }} = {{ total_gb }} GB
+                            {% endif %}
                             </li> 
                         {% endfor %}     
                         </ul>

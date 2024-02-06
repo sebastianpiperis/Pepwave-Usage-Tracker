@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
 import pandas as pd # used to parse excel file
 import requests
 from datetime import datetime, timedelta
@@ -7,16 +8,12 @@ import os
 import re
 
 
+
 load_dotenv() #calls env
 app = Flask(__name__) # creates a flask app instance in order to create routes for the app
-print(app.root_path)
 app.secret_key = 'SITE_KEY' # gets the app's secret key from env
 
 
-
-# access the environment variable
-database_str = os.getenv('DATABASE_CREDENTIALS') # gets data from env which then turns my dictionary into a string 
-database = eval(database_str) #evaluates string in line 14 into code which will be used to in the login function 
 
 # excel variables 
 file_path = '/home/pipe/projects/cellularUsage/script/deviceID.xlsx'
@@ -27,65 +24,75 @@ all_device_ids = ','.join(device_name_to_id.keys()) # joins all device ids into 
 # - since that api call retrieves data for singular devices
 
 
-# global variables for index route 
-global token_error, search_submitted, device_data, api_error, start_date, end_date
-token_error = False
-search_submitted = False
-device_data = None
-api_error = None
-start_date = None
-end_date = None
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+# user database with username, password, and role
+users = {
+    'c2r': {'password': 'c2r', 'role': 'user'},
+    'admin': {'password': 'c2r', 'role': 'admin'}
+}
+
+
+
+class User(UserMixin): # flask's user model
+    def __init__ (self, username): # initializes the user class, its called when a new instance is created of User
+        self.id = username # sets users id to their username
+        self.role = users[username]['role'] # based on the users dictionary, it assigns their role 
+
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User(user_id)
 
 
 
 @app.route('/form_login', methods=['POST', 'GET']) # route can handle both types of request. might just leave it as ['POST']
 def login():
     if request.method == 'POST': # checks if the method is a POST request, essentially determines if the user submits the form
-        name1 = request.form['username'] # gets the information user submits for their username credentials
-        pwd = request.form['password'] # gets the information user submits for their password credentials
+        username = request.form['username'] # gets the information user submits for their username credentials
+        password = request.form['password'] # gets the information user submits for their password credentials
 
         # the following if else checks to see if the usrname and password the user submits is in the database, if not it will recieve an error message as shown in line 28
-        if name1 in database and database[name1] == pwd:
-            session['username'] = name1  
+        if username in users and users[username]['password'] == password:
+            user = User(username)
+            login_user(user)  
             return redirect(url_for('index'))  
         else:
             return render_template('login.html', info='Invalid Credentials. Please contact IT.')
-        
-    return render_template("login.html") # renders login page for smooth request 
+    return render_template("index.html") # renders login page for smooth request 
 
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    global token_error, search_submitted, device_data, api_error, start_date, end_date
 
     if 'username' not in session:  # Check if the user is authenticated
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        search_submitted = True
         start_date = request.form['start_date']
         end_date = request.form['end_date']
+        token, token_error = fetch_token_with_error_handling()
 
-        token = fetch_token()
-        if token is None:
-            token_error = True
-        else:
-            response = fetch_device_data(start_date, end_date, token)
-            if isinstance(response, dict) and 'error' in response:
-                api_error = response['error']
-            else:
-                device_data = response
+        if token_error:
+            return render_template('index.html', token_error=True)
 
-    return render_template('index.html', devices=device_data, start_date=start_date, end_date=end_date, search_submitted=search_submitted, token_error=token_error, api_error=api_error)
+        device_data, api_error = fetch_device_data_with_error_handling(start_date, end_date, token)
+
+        return render_template('index.html', devices=device_data, start_date=start_date, end_date=end_date, search_submitted=True, api_error=api_error)
+
+    # GET request or initial page load
+    return render_template('index.html')
 
 
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    session.pop('username', None) 
-    
+    logout_user()
     return redirect(url_for('login'))  # redirects to login page 
+
     
 
 
@@ -110,6 +117,13 @@ def fetch_token(): # this function fetches the data from the env and constantly 
             log_file.write(f"{datetime.now()}: {log_message}\n")  # writes the current datetime and log message
 
         return None
+
+
+def fetch_token_with_error_handling(): # wrapper function for error handling. it calls fetch_token(), then used in index which then determined how the page will render if True
+    token = fetch_token()
+    if token is None:
+        return None, True # if token is None then token_error is True
+    return token, False  # if token is returned then token_error is False
 
 
 
@@ -157,33 +171,44 @@ def fetch_device_data(start_date_str, end_date_str, token):
         start_date += timedelta(days=1) # increments the start date by one day in each iteration within the loop
     #print(devices_data)
     return prepare_display_data(devices_data)
-    
 
-# fetch locationName from API Call
+
+
+def fetch_device_data_with_error_handling(start_date, end_date, token): # wrapper function which serves the same way as fetch_token_with_error_handling() 
+    response = fetch_device_data(start_date, end_date, token)
+    if isinstance(response, dict) and 'error' in response:
+        return None, response['error']  # device data is None and api_error is the error message
+    return response, None  # device data is returned and api_error is None
+
+
+
 def fetch_location_name(device_name):
-    api_url = f'https://webapi1.ielightning.net/api/v1/Inventory/StockItemsPage/StockItem/GetStockItemByBarCode?barCode={device_name}'
-    headers = {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJbnRlcm5hbENvbnRhY3RJZCI6IjMzNjQiLCJDb21wYW55SWQiOiI3NzQiLCJJZGVudCI6ImNob29zZTJyZW50IiwiQnVpbGRVbmlxdWVJZCI6IjQ1MDEiLCJSZWZyZXNoVG9rZW4iOiI5ZDNGem15cm4wbGZmTVMzY0VUN1RRPT0iLCJPZmZpY2VBY2Nlc3NJZHMiOiI0NTMsNDU0IiwibmJmIjoxNzA2NTQ2NTAzLCJleHAiOjE3MDY2MzI5MDMsImlhdCI6MTcwNjU0NjUwMywiaXNzIjoiaWVsaWdodG5pbmcubmV0In0.z2jnTua13sAxKX55qVBrBgv5SXiB9RoqtfSGuV2Xz-Y',
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-    }
-    try:
-        response = requests.get(api_url, headers=headers)
-        response.raise_for_status()  # This will raise an HTTPError if the HTTP request returned an unsuccessful status code
-        
-        # Assuming the API returns a JSON response where the location name is under the key 'locationName'
-        data = response.json()
-        location_name = data.get('locationName', 'Unknown')
-        job_number = location_name
-        return location_name[0:12], job_number[6:12]  # sliced the string into only getting the job number
+    # Check if the current user is an 'admin'
+    if 'username' in session and users[session['username']]['role'] == 'admin':
+        api_url = f'https://webapi1.ielightning.net/api/v1/Inventory/StockItemsPage/StockItem/GetStockItemByBarCode?barCode={device_name}'
+        headers = {
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJbnRlcm5hbENvbnRhY3RJZCI6IjMzNjQiLCJDb21wYW55SWQiOiI3NzQiLCJJZGVudCI6ImNob29zZTJyZW50IiwiQnVpbGRVbmlxdWVJZCI6IjQ1MDEiLCJSZWZyZXNoVG9rZW4iOiJCaWRvM3g0QnF5ek1pTEN1NENaaTBBPT0iLCJPZmZpY2VBY2Nlc3NJZHMiOiI0NTMsNDU0IiwibmJmIjoxNzA2NzkwMTY1LCJleHAiOjE3MDY4NzY1NjUsImlhdCI6MTcwNjc5MDE2NSwiaXNzIjoiaWVsaWdodG5pbmcubmV0In0.NA-uK0sHTQovuMMFxy8Whj_40oWGkmC5dsXQkG2MVTY',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }
+        try:
+            response = requests.get(api_url, headers=headers)
+            response.raise_for_status()
 
-    except requests.HTTPError as http_err:
-        print(f"HTTP error occurred: {http_err}")  # Python 3.6
-        return 'Unknown'  # Returning 'Unknown' or you could return None or any other error indication
-    except Exception as err:
-        print(f"An error occurred: {err}")
-        return 'Unknown'
-    
+            data = response.json()
+            location_name = data.get('locationName', 'Unknown')
+            job_number = location_name
+            return location_name[0:12], job_number[6:12]
+
+        except requests.HTTPError as http_err:
+            print(f"HTTP error occurred: {http_err}")
+            return 'Unknown'
+        except Exception as err:
+            print(f"An error occurred: {err}")
+            return 'Unknown'
+    else:
+        print("Access denied: User does not have permission to access this function.")
+        return None, None  # or any appropriate response indicating access is denied
 
 
 def prepare_display_data(devices_data):
@@ -194,15 +219,17 @@ def prepare_display_data(devices_data):
     # filtering conditions in this for loop for displaying data 
     for device_id, data in devices_data.items():
         total_gb = round(data['total_up'] + data['total_down'], 2)
-        if total_gb >= 3.0: 
+        if total_gb >= 3.0:
+            # checks if user is an admin before calling fetch_location_name
+            if 'username' in session and users[session['username']]['role'] == 'admin':
+                location_name, job_number = fetch_location_name(data['name'])
+                if location_name is not None and job_number is not None:
+                    display_data.append((data['name'], total_gb, location_name, job_number))
+            else:
+                # non admin user roles can only see this information 
+                display_data.append((data['name'], total_gb))
 
-            location_name, job_number = fetch_location_name( data['name']) # makes argument to call location name function
-            print(job_number)
-            display_data.append((data['name'], total_gb, location_name, job_number))
-
-    display_data.sort(key=lambda x: x[1], reverse=True) # sorts list in descending order 
-
-    print(display_data)
+    display_data.sort(key=lambda x: x[1], reverse=True) # sorts in ascending in order
     return display_data #returns sorted list 
 
 
