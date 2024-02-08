@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
 
 header {
-    background-color: #c2dfe3;
+    background-color: rgba(255, 255, 255, 0.801);
     font-family: 'Roboto Mono', monospace;
     color: #000000;
     border: 1px solid #282828; /* This creates a white border, change the color as needed */
@@ -15,8 +15,8 @@ header {
 
 body {
     font-family: 'Roboto Mono', monospace;
-    background-color: #5c6b73;
-    color: #253237;
+    background-color: #686B6D !important; 
+    color: rgba(255, 255, 255, 0.801);
     margin: 0;
     padding: 0;
 }
@@ -72,7 +72,7 @@ body {
     margin-bottom: 20px;
     font-family: 'Roboto Mono', monospace;
     font-weight: bold;
-    color: black;
+    color: rgba(255, 255, 255, 0.801);
     text-align: center;
     font-weight: bolder;
     
@@ -94,57 +94,51 @@ body {
 
 .date-input input {
     padding: 5px;
-    border: 1px solid #253237;
+    border: rgba(255, 255, 255, 0.801);
     border-radius: 5px;
 }
 
-.search-button-container {
+.search-button {
     width: 100%;
-    display: flex;
+    display: block;
     justify-content: center;
     margin-top: 10px;
+    background-color: rgba(255, 255, 255, 0.801);
+    color: black;
 
 }
 
 #start_date {
-    box-shadow: 2px 2px 0px black;
+    border-color: rgba(255, 255, 255, 0.801);
+    box-shadow: rgba(255, 255, 255, 0.801);
+    color: white;
+    font-weight: bolder;
 }
+
 #end_date {
-    box-shadow: 2px 2px 0px black;
+    border-color: rgba(255, 255, 255, 0.801);
+    box-shadow: rgba(255, 255, 255, 0.801);
+    color: white;
+    font-weight: bolder;
 }
 
 #resetBtn {
     display: block;
     margin: 5px auto;
+    background-color: rgba(255, 255, 255, 0.801);
+    color: black;
 
 }
 
-button {
-    padding: 10px 20px;
-    border-radius: 5px;
-    background-color: #c2dfe3;
-    color: #253237;
-    cursor: pointer;
-    font-family: 'Roboto Mono', monospace;
-    font-weight: bold;
-    border: 1px solid #253237;
-    box-shadow: 2px 2px 0px black;
-
-}
-
-button:hover {
-    background-color: #253237;
-    color:  #c2dfe3;
-}
 
 .underline { /* underlines heading of the populated list */
     text-decoration: underline;
 }
 
 .device-list {
-    background: linear-gradient(to bottom, #c2dfe3, #9db4c0);
+    background: rgba(255, 255, 255, 0.801);
     color: #253237;
-    border-color: #ffb272;
+    border-color: rgba(255, 255, 255, 0.801);
     padding: 10px;
     border-radius: 5px;
     font-family: 'Roboto Mono', monospace;
