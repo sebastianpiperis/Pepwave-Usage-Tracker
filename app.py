@@ -9,14 +9,10 @@ import re
 
 load_dotenv() #calls env
 app = Flask(__name__) # creates a flask app instance in order to create routes for the app
-print(app.root_path)
-app.secret_key = 'SITE_KEY' # gets the app's secret key from env
 
 
 
-# access the environment variable
-database_str = os.getenv('DATABASE_CREDENTIALS') # gets data from env which then turns my dictionary into a string 
-database = eval(database_str) #evaluates string in line 14 into code which will be used to in the login function 
+
 
 # excel variables 
 file_path = '/home/pipe/projects/cellularUsage/script/deviceID.xlsx'
@@ -28,25 +24,12 @@ all_device_ids = ','.join(device_name_to_id.keys()) # joins all device ids into 
 
 
 
-@app.route('/form_login', methods=['POST', 'GET']) # route can handle both types of request. might just leave it as ['POST']
-def login():
-    if request.method == 'POST': # checks if the method is a POST request, essentially determines if the user submits the form
-        name1 = request.form['username'] # gets the information user submits for their username credentials
-        pwd = request.form['password'] # gets the information user submits for their password credentials
-
-        # the following if else checks to see if the usrname and password the user submits is in the database, if not it will recieve an error message as shown in line 28
-        if name1 in database and database[name1] == pwd:
-            session['username'] = name1  
-            return redirect(url_for('index'))  
-        else:
-            return render_template('login.html', info='Invalid Credentials. Please contact IT.')
-        
-    return render_template("login.html") # renders login page for smooth request 
 
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+
     token_error = False
     search_submitted = False
     device_data = None
@@ -54,8 +37,6 @@ def index():
     start_date = None
     end_date = None
 
-    if 'username' not in session:  # Check if the user is authenticated
-        return redirect(url_for('login'))
 
     if request.method == 'POST':
         search_submitted = True
@@ -76,11 +57,11 @@ def index():
 
 
 
-@app.route('/logout', methods=['GET', 'POST'])
-def logout():
-    session.pop('username', None) 
+# @app.route('/logout', methods=['GET', 'POST'])
+# def logout():
+#     session.pop('username', None) 
     
-    return redirect(url_for('login'))  # redirects to login page 
+#     return redirect(url_for('login'))  # redirects to login page 
     
 
 
@@ -173,5 +154,3 @@ def prepare_display_data(devices_data):
 
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True, threaded=False)
