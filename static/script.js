@@ -24,6 +24,17 @@ function configureDateInput(input, max, min, value) {
     }
 }
 
+
+document.addEventListener('DOMContentLoaded', function() {
+    toggleResetButtonVisibility(); // Check and apply the reset button's visibility based on the list's state at page load
+});
+
+function toggleResetButtonVisibility() {
+    resetBtn.style.visibility = deviceList.children.length > 0 ? 'visible' : 'hidden';
+}
+
+
+
 // resets list and dates to default
 function resetList() {
     configureDateInput(startDateInput, formattedToday, formattedSixtyDaysAgo, formattedToday);

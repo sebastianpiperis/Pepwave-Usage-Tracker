@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <title>PEPWAVE Cellular Usage Tool</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link href="https://neubrutalismcss.goodvessel92551.repl.co//style.css" rel="stylesheet" type="text/css" />
+    <!-- <link href="https://neubrutalismcss.goodvessel92551.repl.co//style.css" rel="stylesheet" type="text/css" /> -->
 
 </head>
 <!-- Add this check around the logout button in your index.html -->
-{% if 'username' in session %}
+<!-- {% if 'username' in session %}
     <div class="logout-container">
         <form action="{{ url_for('logout') }}" method="post">
             <button type="submit" class="logout-button">Logout</button>
         </form>
     </div>
-{% endif %}
+{% endif %} -->
 <div class="container">
     <center><header>
         <h1>PEPWAVE CELLULAR USAGE TOOL</h1>
@@ -38,39 +38,36 @@
                 </form>
             </div>
             <div id="loading-spinner" class="hourglass" style="display: none;"></div>
-            <div id = "device-list-container" class="device-list"
-            {% if not devices and not (token_error or api_error) %}
-            style="visibility:hidden;"
+            <div id="device-list-container" class="device-list"
+            {% if search_submitted %}
+                style="visibility:visible;"
             {% else %}
-            style="visibility:visible;"
+                style="visibility:hidden;"
             {% endif %}
             >
-            {% if token_error %}
-                <p>Oops, something went wrong with token authentication. Please contact IT for assistance.</p>
-            {% elif api_error %}
-                <p>{{ api_error }}</p>  <!-- Display API error message -->
-            {% else %}
-                {% if search_submitted %}
-                    <p class="underline">DATA FOR {{ start_date }} to {{ end_date }}</p>
+                {% if token_error %}
+                    <p>Oops, something went wrong with token authentication. Please contact IT for assistance.</p>
+                {% elif api_error %}
+                    <p>{{ api_error }}</p>
+                {% else %}
                     {% if devices %}
+                        <p class="underline">DATA FOR {{ start_date }} to {{ end_date }}</p>
                         <ul id="device-list">
                         {% for device_name, total_gb in devices %}
-                            <li>
-                                {{ device_name }} = {{ total_gb }} GB
-                            </li> 
-                        {% endfor %}     
+                            <li>{{ device_name }} = {{ total_gb }} GB</li>
+                        {% endfor %}
                         </ul>
                     {% else %}
                         <p>There are no PEPWAVE devices over 3GB of Cellular Usage for the dates selected.</p>
                     {% endif %}
                 {% endif %}
-            {% endif %}
             </div>
+            
             <script>
                 sessionStorage.setItem('searchPerformed', '{{ search_submitted }}');
             </script>
     
-    <button id="resetBtn" onclick=resetList() display="hidden">Reset</button>
+    <button id="resetBtn" onclick=resetList()>Reset</button>
 </div>
 
 

@@ -1,22 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+@import url('https://www.shellhacks.net/assets/decorations/sand_tile.png');
 
 header {
-    background-color: #ffffffe7;
+    background-color: #f7e8d5;
     font-family: 'Roboto Mono', monospace;
-    color: #000000;
-    border: 1px solid #282828; /* This creates a white border, change the color as needed */
-    padding: 10px 20px; /* Add some padding */
-    border-radius: 20px;
+    color: #4d3319; /* Adjust the text color to match the shade in the image */
+    border: 1px solid #a67c52; /* Adjust the border color to match the image */
+    padding: 10px 20px;
+    border-radius: 10px; /* This creates rounded corners on the box */
     text-align: center;
-    padding: 20px 0;
     margin-top: 30px;
-    box-shadow: 2px 2px 0px black;
+    box-shadow: 2px 2px 0px #2c2c2c; /* Adjust the shadow color if needed */
+    display: inline-block; /* This makes the box wrap the content */
+    font-size: 14px; /* Adjust the font size as needed */
+    font-weight: bold; /* Makes the text bold */
 }
 
 body {
     font-family: 'Roboto Mono', monospace;
-    background-color: #686B6D;
-    color: #ffffffe7;
+    background-image: url(https://www.shellhacks.net/assets/decorations/sand_tile.png);;
+    color: #4d3319;
     margin: 0;
     padding: 0;
 }
@@ -72,7 +75,7 @@ body {
     margin-bottom: 20px;
     font-family: 'Roboto Mono', monospace;
     font-weight: bold;
-    color: #ffffffe7;
+    color: #4d3319;
     text-align: center;
     font-weight: bolder;
     
@@ -116,13 +119,14 @@ body {
 #resetBtn {
     display: block;
     margin: 5px auto;
+    margin-top: 20px;
 
 }
 
 button {
     padding: 10px 20px;
     border-radius: 5px;
-    background-color: #ffffffe7;
+    background-color: #f7e8d5;;
     color: #253237;
     cursor: pointer;
     font-family: 'Roboto Mono', monospace;
@@ -133,7 +137,7 @@ button {
 }
 
 button:hover {
-    background-color: #686B6D;
+    background-color: #3a3a3a;
     color:  #ffffffe7;
 }
 
@@ -144,7 +148,6 @@ button:hover {
 .device-list {
     background-color: #ffffffe7;
     color: black;
-    border-color: #ffb272;
     padding: 10px;
     border-radius: 5px;
     font-family: 'Roboto Mono', monospace;
@@ -159,27 +162,31 @@ button:hover {
 }
 
 .device-list ul {
-    list-style-type: none;
+    list-style-type: disc; /* This will ensure that bullet points are discs */
     padding: 0;
+    margin-left: 20px; /* Add some space for the bullet points */
 }
 
 .device-list li {
     padding: 5px 0;
-    /* border-bottom: 1px solid #36454F; */
 }
 
-/* Remove border from last item
 .device-list li:last-child {
     border-bottom: none;
-} */
+} 
 
 #loading-spinner {
-    position: fixed; /* Or absolute, depending on how you want to position it */
-    top: 60%;
-    left: 47.7%;
+
     transform: translate(-50%, -50%);
     /* Add width, height, or other styles as necessary */
     align-items: center;
+    z-index: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    position: absolute;
 }
   
 .hourglass, .hourglass:before, .hourglass:after {
@@ -194,10 +201,9 @@ button:hover {
 	clip-path: var(--polygonH);
 	-webkit-clip-path: var(--polygonH);
 	overflow: hidden;
-	position: relative;
+	position: absolute;
 	width: 5em;
 	height: 9em;
-	z-index: 0;
 }
 .hourglass:before, .hourglass:after {
 	animation-timing-function: linear;

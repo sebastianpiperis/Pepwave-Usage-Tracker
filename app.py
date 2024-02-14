@@ -7,6 +7,7 @@ import os
 import re
 
 
+
 load_dotenv() #calls env
 app = Flask(__name__) # creates a flask app instance in order to create routes for the app
 
@@ -151,6 +152,5 @@ def prepare_display_data(devices_data):
 
     print(display_data)
     return display_data #returns sorted list 
-
 
 
