@@ -3,7 +3,7 @@ import pandas as pd # used to parse excel file
 import requests
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-from peplinktoken import fetch_token
+from pepwavetoken import fetch_token
 
 
 
