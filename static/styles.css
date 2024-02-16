@@ -14,6 +14,7 @@ header {
     display: inline-block; /* This makes the box wrap the content */
     font-size: 14px; /* Adjust the font size as needed */
     font-weight: bold; /* Makes the text bold */
+    width: 50%;
 }
 
 body {
@@ -121,7 +122,7 @@ body {
 #resetBtn {
     display: block;
     margin: 5px auto;
-    margin-top: 100px;
+    margin-top: 20px;
 
 }
 
@@ -207,12 +208,18 @@ button:hover {
 	position: absolute;
 	width: 5em;
 	height: 9em;
+    align-items: center;
+    z-index: 0;
+    left: 0;
+    right: 0;
+    top: 0;
 }
 .hourglass:before, .hourglass:after {
 	animation-timing-function: linear;
 	content: "";
 	display: block;
 	position: absolute;
+    
 }
 .hourglass:before {
 	--polygonB1: polygon(0% 0%,100% 0%,100% 24%,50% 47%,50% 47%,50% 47%,50% 47%,50% 47%,50% 47%,50% 47%,50% 47%,0% 24%);

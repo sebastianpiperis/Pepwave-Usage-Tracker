@@ -24,17 +24,6 @@ function configureDateInput(input, max, min, value) {
     }
 }
 
-
-document.addEventListener('DOMContentLoaded', function() {
-    toggleResetButtonVisibility(); // Check and apply the reset button's visibility based on the list's state at page load
-});
-
-function toggleResetButtonVisibility() {
-    resetBtn.style.visibility = deviceList.children.length > 0 ? 'visible' : 'hidden';
-}
-
-
-
 // resets list and dates to default
 function resetList() {
     configureDateInput(startDateInput, formattedToday, formattedSixtyDaysAgo, formattedToday);
@@ -49,6 +38,7 @@ searchForm.addEventListener('submit', function (event) {
     if (formIsValid()) {
         deviceList.style.visibility = 'hidden'; // hides the device list
         resetBtn.style.visibility = 'hidden'; // hides the reset button
+        searchForm.style.visibility = 'hidden' // hides the date picker
         searchForm.submit(); // submits the form
         showLoader(); // shows the hourglass spinner
 
@@ -57,7 +47,6 @@ searchForm.addEventListener('submit', function (event) {
     }
 
 });
-
 
 // function to show loading spinner
 function showLoader() {

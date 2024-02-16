@@ -1,10 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request
 import pandas as pd # used to parse excel file
 import requests
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-import os
-import re
+from peplinktoken import fetch_token
 
 
 
@@ -56,37 +55,7 @@ def index():
 
     return render_template('index.html', devices=device_data, start_date=start_date, end_date=end_date, search_submitted=search_submitted, token_error=token_error, api_error=api_error)
 
-
-
-# @app.route('/logout', methods=['GET', 'POST'])
-# def logout():
-#     session.pop('username', None) 
     
-#     return redirect(url_for('login'))  # redirects to login page 
-    
-
-
-def fetch_token(): # this function fetches the data from the env and constantly regenerates access tokens from InControl2
-    client_id = os.getenv('client_id')
-    client_secret = os.getenv('client_secret')
-
-    data = {
-        'client_id': client_id,
-        'client_secret': client_secret,
-        'grant_type': 'client_credentials'
-    }
-
-    url = 'https://api.ic.peplink.com/api/oauth2/token'
-    response = requests.post(url, data=data)
-
-    if response.status_code == 200:
-        return response.json().get('access_token')
-    else:
-        log_message = f"Failed to fetch token. Status Code: {response.status_code}, Response: {response.text}"
-        with open('token_fetch_log.txt', 'a') as log_file:  # 'a' opens the file in append mode to preserve existing data (errors can conccur as well)
-            log_file.write(f"{datetime.now()}: {log_message}\n")  # writes the current datetime and log message
-
-        return None
 
 
 
@@ -99,7 +68,6 @@ def fetch_device_data(start_date_str, end_date_str, token):
     devices_data = {} 
 
     while start_date <= end_date:
-        print(f"Processing date: {start_date}")
         formatted_date = start_date.strftime('%Y-%m-%d') + "T00:00:01"
         api_url = f'https://api.ic.peplink.com/rest/o/t00nnt/bandwidth_per_device?type=daily&report_date={formatted_date}&wan_id=2&device_ids={all_device_ids}&include_details=true&show_devices_with_usages_only=true'
         headers = {
@@ -109,9 +77,9 @@ def fetch_device_data(start_date_str, end_date_str, token):
                 }
 
         try:
-            response = requests.get(api_url, headers=headers) # getting data 
+            response = requests.get(api_url, headers=headers) 
 
-            if response.status_code != 200: # this will catch any server, client, network, limitations, parameters, and/or deprication errors in the api call
+            if response.status_code != 200: 
                 return {'error': 'Oops, we have failed to retrieve any device data, please contact IT.', 'status_code': response.status_code}
 
             daily_data = response.json().get('data', []) # processes data if api call is successful, if not data provides an empty list
@@ -132,7 +100,6 @@ def fetch_device_data(start_date_str, end_date_str, token):
             return {'error': 'Oops, an API exception error has occurred. Please contact IT.', 'exception': str(e)}
 
         start_date += timedelta(days=1) # increments the start date by one day in each iteration within the loop
-    #print(devices_data)
     return prepare_display_data(devices_data)
     
     
@@ -140,7 +107,6 @@ def fetch_device_data(start_date_str, end_date_str, token):
 def prepare_display_data(devices_data):
     # processes devices_data dictionary to prepare it for display
     display_data = []
-    print(devices_data) 
     
     # filtering conditions in this for loop for displaying data 
     for device_id, data in devices_data.items():
@@ -149,8 +115,6 @@ def prepare_display_data(devices_data):
             display_data.append((data['name'], total_gb))
 
     display_data.sort(key=lambda x: x[1], reverse=True) # sorts list in descending order 
-
-    print(display_data)
     return display_data #returns sorted list 
 
 
