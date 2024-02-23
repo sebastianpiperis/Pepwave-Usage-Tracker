@@ -14,7 +14,7 @@ api_base_url = 'https://webapi1.ielightning.net/api/v1/Inventory/StockItemsPage/
 
 # corrected indentation for the 'headers' dictionary
 headers = {
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJbnRlcm5hbENvbnRhY3RJZCI6IjMzNjQiLCJDb21wYW55SWQiOiI3NzQiLCJJZGVudCI6ImNob29zZTJyZW50IiwiQnVpbGRVbmlxdWVJZCI6IjQ1MDEiLCJSZWZyZXNoVG9rZW4iOiJWSTNkdG54cjVDdVJiNkhmSFlnREFnPT0iLCJPZmZpY2VBY2Nlc3NJZHMiOiI0NTMsNDU0IiwibmJmIjoxNzA1NjcxMTMyLCJleHAiOjE3MDU3NTc1MzIsImlhdCI6MTcwNTY3MTEzMiwiaXNzIjoiaWVsaWdodG5pbmcubmV0In0.E0Vv4m7zWnDiS7ZWYejUvLjjhzCMP2u51XoSbr_zYmY',
+    'Authorization': 'Bearer ',
     'Content-Type': 'application/json',
     'Accept': 'application/json',
 }
