@@ -5,6 +5,6 @@ The Pepwave Usage Tracker is a tool used to view how much cellular data is being
 
   Below is a demo video and an image attachment.
 
-![Image Alt Text]([https://raw.githubusercontent.com/your-username/your-repository-name/main/path/to/your/image.jpg](https://github.com/sebastianpiperis/Pepwave-Usage-Tracker/blob/92c9521f4e30204bbb691676b23817a1e85a0e45/Cellular-Usage-Report.png)https://github.com/sebastianpiperis/Pepwave-Usage-Tracker/blob/92c9521f4e30204bbb691676b23817a1e85a0e45/Cellular-Usage-Report.png)
+![Image Alt Text](Cellular-Usage-Report.png)
 
 [Link to Video](https://drive.google.com/file/d/17zwrE9ClT8y9TM0a7tC5VttyLJyv1Hgp/view?usp=sharing)
