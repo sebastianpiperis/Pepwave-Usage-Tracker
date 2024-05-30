@@ -69,7 +69,7 @@ def fetch_device_data(start_date_str, end_date_str, token):
 
     while start_date <= end_date:
         formatted_date = start_date.strftime('%Y-%m-%d') + "T00:00:01"
-        api_url = f'https://api.ic.peplink.com/rest/o/t00nnt/bandwidth_per_device?type=daily&report_date={formatted_date}&wan_id=2&device_ids={all_device_ids}&include_details=true&show_devices_with_usages_only=true'
+        api_url = f'api_url'
         headers = {
                     'Authorization': f'Bearer {token}', 
                     'Content-Type': 'application/json', 
