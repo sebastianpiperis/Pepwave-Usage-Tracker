@@ -4,7 +4,7 @@ api_url = 'https://api.ic.peplink.com/rest/o/t00nnt/d?&has_status=true&fetch_hwm
 headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'Authorization': 'Bearer b0e6961ba954e183d0cf7cf0e7893eb1'
+    'Authorization': 'Bearer '
 }
 
 try:
