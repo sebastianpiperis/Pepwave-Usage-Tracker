@@ -1,6 +1,6 @@
 import requests
 
-api_url = 'https://api.ic.peplink.com/rest/o/t00nnt/d?&has_status=true&fetch_hwmon=true&with_pepvpn_peer_info=true'
+api_url = ''
 headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
